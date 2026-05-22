@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------- Cursor Follower ----------
     const cursorFollower = document.getElementById('cursorFollower');
-    
     if (window.matchMedia('(pointer: fine)').matches) {
         document.addEventListener('mousemove', (e) => {
             cursorFollower.style.left = e.clientX + 'px';
@@ -17,29 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------- Navbar Scroll Effect ----------
     const navbar = document.getElementById('navbar');
-    let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
-        const currentScroll = window.scrollY;
-        
-        if (currentScroll > 50) {
+        if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-
-        lastScroll = currentScroll;
     });
 
     // ---------- Active Nav Link on Scroll ----------
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.navbar__link');
-
-    const observerOptions = {
-        root: null,
-        rootMargin: '-20% 0px -80% 0px',
-        threshold: 0
-    };
 
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -53,7 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
-    }, observerOptions);
+    }, {
+        root: null,
+        rootMargin: '-20% 0px -80% 0px',
+        threshold: 0
+    });
 
     sections.forEach(section => sectionObserver.observe(section));
 
@@ -112,134 +104,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animateCounter(el, start, end, duration) {
         const startTime = performance.now();
-        
         function update(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            
-            // Easing: ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.round(start + (end - start) * eased);
-            
-            el.textContent = current;
-            
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            }
+            el.textContent = Math.round(start + (end - start) * eased);
+            if (progress < 1) requestAnimationFrame(update);
         }
-        
         requestAnimationFrame(update);
     }
 
     // ---------- Smooth Scroll for Anchor Links ----------
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetEl = document.querySelector(targetId);
-            
+            const targetEl = document.querySelector(this.getAttribute('href'));
             if (targetEl) {
-                targetEl.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     });
 
-    // ---------- Contact Form Handler ----------
-    const contactForm = document.getElementById('contactForm');
-    
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const submitBtn = document.getElementById('submitBtn');
-        const originalContent = submitBtn.innerHTML;
-        
-        // Show loading state
-        submitBtn.innerHTML = `
-            <span>Mengirim...</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinning">
-                <path d="M21 12a9 9 0 11-6.219-8.56"/>
-            </svg>
-        `;
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.7';
-
-        // Simulate sending
-        setTimeout(() => {
-            submitBtn.innerHTML = `
-                <span>Pesan Terkirim! ✓</span>
-            `;
-            submitBtn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-            
-            setTimeout(() => {
-                submitBtn.innerHTML = originalContent;
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.background = '';
-                contactForm.reset();
-            }, 2500);
-        }, 1500);
-    });
-
     // ---------- Tilt Effect on Project Cards ----------
-    const projectCards = document.querySelectorAll('.project-card');
-
-    projectCards.forEach(card => {
+    document.querySelectorAll('.project-card').forEach(card => {
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
-
+            const rotateX = (y - rect.height / 2) / 20;
+            const rotateY = (rect.width / 2 - x) / 20;
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
         });
-
         card.addEventListener('mouseleave', () => {
             card.style.transform = '';
         });
     });
 
-    // ---------- Typing Effect for Code Window ----------
-    const codeWindow = document.querySelector('.code-window__body code');
-    
-    if (codeWindow) {
-        const codeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    codeWindow.style.opacity = '0';
-                    codeWindow.style.transition = 'opacity 0.5s ease';
-                    
-                    setTimeout(() => {
-                        codeWindow.style.opacity = '1';
-                    }, 300);
-                    
-                    codeObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.3 });
-
-        codeObserver.observe(codeWindow);
-    }
-
-    // ---------- Parallax Effect for Background Glows ----------
-    window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        const glows = document.querySelectorAll('.bg-glow');
-
-        glows.forEach((glow, index) => {
-            const speed = (index + 1) * 0.03;
-            glow.style.transform = `translateY(${scrollY * speed}px)`;
-        });
-    });
-
     // ---------- Skill Chips Stagger Animation ----------
-    const skillChips = document.querySelectorAll('.skill-chip');
-    
     const chipObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -248,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     chip.style.opacity = '0';
                     chip.style.transform = 'translateY(10px) scale(0.95)';
                     chip.style.transition = `all 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s`;
-                    
                     setTimeout(() => {
                         chip.style.opacity = '1';
                         chip.style.transform = 'translateY(0) scale(1)';
@@ -259,20 +159,259 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.2 });
 
-    document.querySelectorAll('.skills__grid').forEach(grid => {
-        chipObserver.observe(grid);
+    document.querySelectorAll('.skills__grid').forEach(grid => chipObserver.observe(grid));
+
+    // ---------- Parallax for Background Glows ----------
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        document.querySelectorAll('.bg-glow').forEach((glow, index) => {
+            glow.style.transform = `translateY(${scrollY * (index + 1) * 0.03}px)`;
+        });
     });
 
-    // ---------- Add spinning animation for loading ----------
+    // ============================================================
+    // INBOX SYSTEM — Pesan Masuk (disimpan di localStorage)
+    // ============================================================
+
+    const INBOX_KEY = 'portfolio_inbox_messages';
+
+    // Helpers
+    function getMessages() {
+        try {
+            return JSON.parse(localStorage.getItem(INBOX_KEY)) || [];
+        } catch {
+            return [];
+        }
+    }
+
+    function saveMessages(messages) {
+        localStorage.setItem(INBOX_KEY, JSON.stringify(messages));
+    }
+
+    function countUnread() {
+        return getMessages().filter(m => m.unread).length;
+    }
+
+    function formatTime(timestamp) {
+        const d = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHr  = Math.floor(diffMs / 3600000);
+        const diffDay = Math.floor(diffMs / 86400000);
+
+        if (diffMin < 1)  return 'Baru saja';
+        if (diffMin < 60) return `${diffMin} menit lalu`;
+        if (diffHr  < 24) return `${diffHr} jam lalu`;
+        if (diffDay < 7)  return `${diffDay} hari lalu`;
+        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // Render
+    function renderMessages() {
+        const messages = getMessages();
+        const body = document.getElementById('inboxBody');
+
+        if (messages.length === 0) {
+            body.innerHTML = `
+                <div class="inbox-empty">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <p>Belum ada pesan masuk.<br>Pesan dari form kontak akan muncul di sini.</p>
+                </div>`;
+            return;
+        }
+
+        body.innerHTML = messages
+            .slice()
+            .reverse()
+            .map(msg => `
+                <div class="inbox-message ${msg.unread ? 'unread' : ''}" data-id="${msg.id}">
+                    <div class="inbox-message__meta">
+                        <span class="inbox-message__sender">
+                            ${escapeHtml(msg.name)}
+                            ${msg.unread ? '<span class="inbox-message__unread-dot"></span>' : ''}
+                        </span>
+                        <span class="inbox-message__time">${formatTime(msg.timestamp)}</span>
+                    </div>
+                    <span class="inbox-message__email">${escapeHtml(msg.email)}</span>
+                    <p class="inbox-message__text">${escapeHtml(msg.message)}</p>
+                    <button class="inbox-message__delete" data-id="${msg.id}" title="Hapus pesan">✕</button>
+                </div>
+            `)
+            .join('');
+
+        // Delete individual message
+        body.querySelectorAll('.inbox-message__delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                deleteMessage(id);
+            });
+        });
+
+        // Mark as read on click
+        body.querySelectorAll('.inbox-message').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                markAsRead(id);
+            });
+        });
+    }
+
+    function deleteMessage(id) {
+        const messages = getMessages().filter(m => m.id !== id);
+        saveMessages(messages);
+        renderMessages();
+        updateBadge();
+
+        // Animate removal
+        const card = document.querySelector(`.inbox-message[data-id="${id}"]`);
+        if (card) {
+            card.style.transition = 'all 0.25s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            setTimeout(() => card.remove(), 250);
+        }
+    }
+
+    function markAsRead(id) {
+        const messages = getMessages().map(m =>
+            m.id === id ? { ...m, unread: false } : m
+        );
+        saveMessages(messages);
+        updateBadge();
+        const card = document.querySelector(`.inbox-message[data-id="${id}"]`);
+        if (card) {
+            card.classList.remove('unread');
+            const dot = card.querySelector('.inbox-message__unread-dot');
+            if (dot) dot.remove();
+        }
+    }
+
+    function updateBadge() {
+        const badge = document.getElementById('inboxBadge');
+        const unread = countUnread();
+        badge.textContent = unread;
+        badge.classList.toggle('hidden', unread === 0);
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Inbox panel toggle
+    const inboxFab   = document.getElementById('inboxFab');
+    const inboxPanel = document.getElementById('inboxPanel');
+    const inboxClose = document.getElementById('inboxClose');
+    const inboxClear = document.getElementById('inboxClear');
+
+    inboxFab.addEventListener('click', () => {
+        const isOpen = inboxPanel.classList.toggle('active');
+        if (isOpen) {
+            renderMessages();
+            // Mark all unread as read when opening
+            const messages = getMessages().map(m => ({ ...m, unread: false }));
+            saveMessages(messages);
+            updateBadge();
+            renderMessages();
+        }
+    });
+
+    inboxClose.addEventListener('click', () => {
+        inboxPanel.classList.remove('active');
+    });
+
+    inboxClear.addEventListener('click', () => {
+        if (getMessages().length === 0) return;
+        if (confirm('Hapus semua pesan masuk?')) {
+            saveMessages([]);
+            renderMessages();
+            updateBadge();
+        }
+    });
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+        if (
+            inboxPanel.classList.contains('active') &&
+            !inboxPanel.contains(e.target) &&
+            !inboxFab.contains(e.target)
+        ) {
+            inboxPanel.classList.remove('active');
+        }
+    });
+
+    // Initialize badge
+    updateBadge();
+
+    // ---------- Contact Form Handler ----------
+    const contactForm = document.getElementById('contactForm');
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name    = document.getElementById('formName').value.trim();
+        const email   = document.getElementById('formEmail').value.trim();
+        const message = document.getElementById('formMessage').value.trim();
+        const submitBtn = document.getElementById('submitBtn');
+        const originalHTML = submitBtn.innerHTML;
+
+        if (!name || !email || !message) return;
+
+        // Loading state
+        submitBtn.innerHTML = `
+            <span>Mengirim...</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinning">
+                <path d="M21 12a9 9 0 11-6.219-8.56"/>
+            </svg>`;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+
+        setTimeout(() => {
+            // Save message to inbox
+            const messages = getMessages();
+            const newMsg = {
+                id: Date.now().toString(),
+                name,
+                email,
+                message,
+                timestamp: Date.now(),
+                unread: true
+            };
+            messages.push(newMsg);
+            saveMessages(messages);
+            updateBadge();
+
+            // Success state
+            submitBtn.innerHTML = `<span>Pesan Terkirim! ✓</span>`;
+            submitBtn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+            submitBtn.style.opacity = '1';
+
+            setTimeout(() => {
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.disabled = false;
+                submitBtn.style.background = '';
+                contactForm.reset();
+            }, 2500);
+        }, 1200);
+    });
+
+    // ---------- Spinning animation style ----------
     const style = document.createElement('style');
     style.textContent = `
         @keyframes spin {
             from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            to   { transform: rotate(360deg); }
         }
-        .spinning {
-            animation: spin 1s linear infinite;
-        }
+        .spinning { animation: spin 1s linear infinite; }
     `;
     document.head.appendChild(style);
 
