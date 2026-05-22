@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat — Muhamad Pasyafatir Adiyat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Login Screen -->
+    <div class="admin-login" id="adminLogin">
+        <div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+        <div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+        <div class="bg-grid" aria-hidden="true"></div>
+        <div class="admin-login__card">
+            <div class="admin-login__logo">
+                <span class="navbar__logo-bracket">&lt;</span>
+                <span class="navbar__logo-text">PA</span>
+                <span class="navbar__logo-bracket">/&gt;</span>
+            </div>
+            <h1 class="admin-login__title">Admin Dashboard</h1>
+            <p class="admin-login__sub">Masuk untuk melihat & membalas pesan</p>
+            <form id="loginForm" class="admin-login__form">
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="adminPassword" class="form-input" placeholder="Masukkan password admin" autocomplete="current-password">
+                </div>
+                <div class="admin-login__error" id="loginError"></div>
+                <button type="submit" class="btn btn--primary btn--full" id="loginBtn">
+                    <span>Masuk</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard" style="display:none">
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar__header">
+                <a href="index.html" class="admin-sidebar__logo">
+                    <span class="navbar__logo-bracket">&lt;</span>
+                    <span class="navbar__logo-text">PA</span>
+                    <span class="navbar__logo-bracket">/&gt;</span>
+                </a>
+                <span class="admin-sidebar__label">Admin</span>
+            </div>
+
+            <div class="admin-sidebar__search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="searchSessions" placeholder="Cari percakapan..." class="admin-search-input">
+            </div>
+
+            <div class="admin-sidebar__sessions" id="sessionList">
+                <div class="admin-sessions-empty">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    <p>Belum ada percakapan</p>
+                </div>
+            </div>
+
+            <div class="admin-sidebar__footer">
+                <div class="admin-sidebar__status">
+                    <span class="admin-status-dot"></span>
+                    <span>Online</span>
+                </div>
+                <button class="admin-logout" id="logoutBtn" title="Keluar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="admin-main" id="adminMain">
+
+            <!-- Empty state -->
+            <div class="admin-empty" id="adminEmpty">
+                <div class="bg-glow bg-glow--3" aria-hidden="true"></div>
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                <h2>Pilih percakapan</h2>
+                <p>Klik salah satu percakapan di sidebar untuk mulai membalas pesan</p>
+            </div>
+
+            <!-- Active Chat -->
+            <div class="admin-chat" id="adminChat" style="display:none">
+                <!-- Chat Header -->
+                <div class="admin-chat__header" id="chatHeader">
+                    <div class="admin-chat__user">
+                        <div class="admin-chat__avatar" id="chatAvatar">?</div>
+                        <div>
+                            <h3 id="chatName">-</h3>
+                            <span id="chatStatus" class="admin-chat__status">Aktif sekarang</span>
+                        </div>
+                    </div>
+                    <div class="admin-chat__actions">
+                        <button class="admin-chat__action-btn" id="deleteSessionBtn" title="Hapus percakapan">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="admin-chat__messages" id="adminMessages"></div>
+
+                <!-- Reply Input -->
+                <div class="admin-chat__input-area">
+                    <div class="admin-chat__input-wrapper">
+                        <textarea
+                            id="adminReplyInput"
+                            class="admin-chat__input"
+                            placeholder="Ketik balasan..."
+                            rows="1"
+                        ></textarea>
+                        <button class="admin-chat__send" id="adminSendBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="admin-chat__hint">Tekan Enter untuk kirim, Shift+Enter untuk baris baru</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import {
+            getDatabase, ref, push, onValue, set, remove, serverTimestamp, onChildAdded, onChildChanged, query, orderByChild
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // =====================================================
+        // GANTI DENGAN FIREBASE CONFIG KAMU
+        // =====================================================
+        const firebaseConfig = {
+            apiKey: "GANTI_API_KEY",
+            authDomain: "GANTI_AUTH_DOMAIN",
+            databaseURL: "GANTI_DATABASE_URL",
+            projectId: "GANTI_PROJECT_ID",
+            storageBucket: "GANTI_STORAGE_BUCKET",
+            messagingSenderId: "GANTI_MESSAGING_SENDER_ID",
+            appId: "GANTI_APP_ID"
+        };
+        // =====================================================
+
+        const ADMIN_PASSWORD = "pasyafatir2026"; // Ganti password ini!
+
+        let app, db;
+        let currentSessionId = null;
+        let messagesUnsubscribe = null;
+        let sessionsUnsubscribe = null;
+
+        // Try init Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            window._db = db;
+            window._firebase = { ref, push, onValue, set, remove, serverTimestamp, onChildAdded, onChildChanged, query, orderByChild };
+        } catch (e) {
+            console.warn("Firebase config belum diisi. Silakan isi firebaseConfig.");
+        }
+
+        // ==================== AUTH ====================
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const adminLogin = document.getElementById('adminLogin');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Check session
+        if (sessionStorage.getItem('admin_auth') === 'true') {
+            showDashboard();
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pwd = document.getElementById('adminPassword').value;
+            if (pwd === ADMIN_PASSWORD) {
+                sessionStorage.setItem('admin_auth', 'true');
+                loginError.textContent = '';
+                showDashboard();
+            } else {
+                loginError.textContent = '❌ Password salah. Coba lagi.';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('admin_auth');
+            location.reload();
+        });
+
+        function showDashboard() {
+            adminLogin.style.display = 'none';
+            adminDashboard.style.display = 'flex';
+            if (db) loadSessions();
+        }
+
+        // ==================== SESSIONS ====================
+        function loadSessions() {
+            const sessRef = ref(db, 'chatSessions');
+            onValue(sessRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                renderSessionList(data);
+            });
+        }
+
+        function renderSessionList(sessions) {
+            const list = document.getElementById('sessionList');
+            const searchVal = document.getElementById('searchSessions').value.toLowerCase();
+            const entries = Object.entries(sessions)
+                .filter(([, s]) => {
+                    if (!searchVal) return true;
+                    return (s.visitorName || '').toLowerCase().includes(searchVal);
+                })
+                .sort((a, b) => (b[1].lastMessageAt || 0) - (a[1].lastMessageAt || 0));
+
+            if (entries.length === 0) {
+                list.innerHTML = `
+                    <div class="admin-sessions-empty">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        <p>Belum ada percakapan</p>
+                    </div>`;
+                return;
+            }
+
+            list.innerHTML = entries.map(([id, session]) => {
+                const initial = (session.visitorName || '?')[0].toUpperCase();
+                const unread = session.unreadAdmin || 0;
+                const lastMsg = session.lastMessage || 'Belum ada pesan';
+                const isActive = id === currentSessionId;
+                return `
+                    <div class="admin-session-item ${isActive ? 'active' : ''} ${unread > 0 ? 'has-unread' : ''}"
+                         data-session-id="${id}">
+                        <div class="admin-session-avatar">${initial}</div>
+                        <div class="admin-session-info">
+                            <div class="admin-session-top">
+                                <span class="admin-session-name">${escHtml(session.visitorName || 'Pengunjung')}</span>
+                                <span class="admin-session-time">${formatTime(session.lastMessageAt)}</span>
+                            </div>
+                            <div class="admin-session-preview">
+                                <span>${escHtml(lastMsg.substring(0, 45))}${lastMsg.length > 45 ? '...' : ''}</span>
+                                ${unread > 0 ? `<span class="admin-unread-badge">${unread}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            // Click handlers
+            list.querySelectorAll('.admin-session-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const sid = item.getAttribute('data-session-id');
+                    openSession(sid, sessions[sid]);
+                });
+            });
+        }
+
+        // ==================== OPEN SESSION ====================
+        function openSession(sessionId, session) {
+            currentSessionId = sessionId;
+
+            // UI
+            document.getElementById('adminEmpty').style.display = 'none';
+            document.getElementById('adminChat').style.display = 'flex';
+            document.getElementById('chatName').textContent = session.visitorName || 'Pengunjung';
+            document.getElementById('chatAvatar').textContent = (session.visitorName || '?')[0].toUpperCase();
+
+            // Mark as read
+            set(ref(db, `chatSessions/${sessionId}/unreadAdmin`), 0);
+
+            // Highlight active session
+            document.querySelectorAll('.admin-session-item').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-session-id') === sessionId);
+            });
+
+            // Load messages
+            loadMessages(sessionId);
+
+            // Delete session btn
+            document.getElementById('deleteSessionBtn').onclick = () => {
+                if (confirm(`Hapus percakapan dengan ${session.visitorName || 'Pengunjung'}?`)) {
+                    remove(ref(db, `chatSessions/${sessionId}`));
+                    remove(ref(db, `chatMessages/${sessionId}`));
+                    currentSessionId = null;
+                    document.getElementById('adminEmpty').style.display = 'flex';
+                    document.getElementById('adminChat').style.display = 'none';
+                }
+            };
+        }
+
+        // ==================== MESSAGES ====================
+        function loadMessages(sessionId) {
+            const msgBox = document.getElementById('adminMessages');
+            msgBox.innerHTML = '';
+
+            const msgsRef = ref(db, `chatMessages/${sessionId}`);
+            onValue(msgsRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const msgs = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+                msgBox.innerHTML = msgs.map(m => renderMessage(m)).join('');
+                scrollToBottom(msgBox);
+            });
+        }
+
+        function renderMessage(msg) {
+            const isAdmin = msg.sender === 'admin';
+            const time = formatTime(msg.timestamp);
+            return `
+                <div class="chat-msg ${isAdmin ? 'chat-msg--admin' : 'chat-msg--visitor'}">
+                    <div class="chat-msg__bubble">
+                        <p>${escHtml(msg.text)}</p>
+                        <span class="chat-msg__time">${time}</span>
+                    </div>
+                </div>`;
+        }
+
+        // ==================== SEND REPLY ====================
+        const replyInput = document.getElementById('adminReplyInput');
+        const sendBtn = document.getElementById('adminSendBtn');
+
+        function sendReply() {
+            const text = replyInput.value.trim();
+            if (!text || !currentSessionId) return;
+
+            const now = Date.now();
+            push(ref(db, `chatMessages/${currentSessionId}`), {
+                text,
+                sender: 'admin',
+                timestamp: now
+            });
+
+            set(ref(db, `chatSessions/${currentSessionId}/lastMessage`), text);
+            set(ref(db, `chatSessions/${currentSessionId}/lastMessageAt`), now);
+            set(ref(db, `chatSessions/${currentSessionId}/unreadVisitor`), 1);
+
+            replyInput.value = '';
+            replyInput.style.height = 'auto';
+        }
+
+        sendBtn.addEventListener('click', sendReply);
+
+        replyInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendReply();
+            }
+        });
+
+        // Auto-resize textarea
+        replyInput.addEventListener('input', () => {
+            replyInput.style.height = 'auto';
+            replyInput.style.height = Math.min(replyInput.scrollHeight, 120) + 'px';
+        });
+
+        // ==================== SEARCH ====================
+        document.getElementById('searchSessions').addEventListener('input', () => {
+            const sessRef = ref(db, 'chatSessions');
+            onValue(sessRef, (snapshot) => {
+                renderSessionList(snapshot.val() || {});
+            }, { onlyOnce: true });
+        });
+
+        // ==================== HELPERS ====================
+        function scrollToBottom(el) {
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const d = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - d;
+            const diffMin = Math.floor(diffMs / 60000);
+            const diffHr  = Math.floor(diffMs / 3600000);
+            const diffDay = Math.floor(diffMs / 86400000);
+            if (diffMin < 1)  return 'Baru saja';
+            if (diffMin < 60) return `${diffMin}m lalu`;
+            if (diffHr  < 24) return `${diffHr}j lalu`;
+            if (diffDay < 7)  return `${diffDay}h lalu`;
+            return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+        }
+
+        function escHtml(str) {
+            return String(str || '')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+    </script>
+</body>
+</html>

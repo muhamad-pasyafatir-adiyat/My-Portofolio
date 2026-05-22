@@ -1,0 +1,564 @@
+/* =============================================
+   ADMIN DASHBOARD CSS
+   ============================================= */
+
+.admin-body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ---------- Login Screen ---------- */
+.admin-login {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.admin-login__card {
+    background: rgba(17, 17, 24, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 3;
+    text-align: center;
+}
+
+.admin-login__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.admin-login__title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.admin-login__sub {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.admin-login__form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-login__error {
+    font-size: 0.85rem;
+    color: #ef4444;
+    min-height: 20px;
+}
+
+/* ---------- Dashboard Layout ---------- */
+.admin-dashboard {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ---------- Sidebar ---------- */
+.admin-sidebar {
+    width: 300px;
+    min-width: 300px;
+    height: 100vh;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.admin-sidebar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.admin-sidebar__logo {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.admin-sidebar__label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent-purple);
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.2);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-sidebar__search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.admin-sidebar__search svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.admin-search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: var(--font-primary);
+    width: 100%;
+}
+
+.admin-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.admin-sidebar__sessions {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.admin-sessions-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.admin-sessions-empty svg {
+    opacity: 0.3;
+}
+
+.admin-sidebar__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.admin-sidebar__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.admin-status-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+    50%       { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+
+.admin-logout {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+
+.admin-logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* ---------- Session Items ---------- */
+.admin-session-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    margin-bottom: 2px;
+}
+
+.admin-session-item:hover {
+    background: rgba(168,85,247,0.06);
+}
+
+.admin-session-item.active {
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.2);
+}
+
+.admin-session-item.has-unread .admin-session-name {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.admin-session-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+}
+
+.admin-session-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-session-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.admin-session-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.admin-session-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+
+.admin-session-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-session-preview span:first-child {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-unread-badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    background: var(--accent-purple);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ---------- Main Chat Area ---------- */
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.admin-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px;
+}
+
+.admin-empty svg {
+    opacity: 0.2;
+}
+
+.admin-empty h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.admin-empty p {
+    font-size: 0.9rem;
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+/* ---------- Active Chat ---------- */
+.admin-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.admin-chat__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.01);
+    flex-shrink: 0;
+}
+
+.admin-chat__user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-chat__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 1rem;
+}
+
+.admin-chat__user h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.admin-chat__status {
+    font-size: 0.78rem;
+    color: #22c55e;
+}
+
+.admin-chat__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-chat__action-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+
+.admin-chat__action-btn:hover {
+    background: rgba(239,68,68,0.1);
+    color: #ef4444;
+}
+
+/* ---------- Messages ---------- */
+.admin-chat__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-msg {
+    display: flex;
+    max-width: 70%;
+}
+
+.chat-msg--visitor {
+    align-self: flex-start;
+}
+
+.chat-msg--admin {
+    align-self: flex-end;
+}
+
+.chat-msg__bubble {
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+    position: relative;
+}
+
+.chat-msg--visitor .chat-msg__bubble {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 4px;
+}
+
+.chat-msg--admin .chat-msg__bubble {
+    background: var(--gradient-primary);
+    border-bottom-right-radius: 4px;
+}
+
+.chat-msg__bubble p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 6px;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.chat-msg--visitor .chat-msg__bubble p {
+    color: var(--text-primary);
+}
+
+.chat-msg--admin .chat-msg__bubble p {
+    color: white;
+}
+
+.chat-msg__time {
+    font-size: 0.68rem;
+    opacity: 0.6;
+    font-family: var(--font-mono);
+    display: block;
+    text-align: right;
+}
+
+.chat-msg--admin .chat-msg__time {
+    color: rgba(255,255,255,0.8);
+}
+
+/* ---------- Input Area ---------- */
+.admin-chat__input-area {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.admin-chat__input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    transition: var(--transition-base);
+}
+
+.admin-chat__input-wrapper:focus-within {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(168,85,247,0.1);
+}
+
+.admin-chat__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: var(--font-primary);
+    resize: none;
+    max-height: 120px;
+    line-height: 1.5;
+}
+
+.admin-chat__input::placeholder {
+    color: var(--text-muted);
+}
+
+.admin-chat__send {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(168,85,247,0.3);
+}
+
+.admin-chat__send:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(168,85,247,0.45);
+}
+
+.admin-chat__hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 8px 0 0;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        display: none;
+    }
+}

@@ -624,5 +624,189 @@
     </div>
 
     <script src="script.js"></script>
+
+    <!-- ====== VISITOR LIVE CHAT WIDGET ====== -->
+    <!-- Chat Bubble Button -->
+    <button class="chat-fab" id="chatFab" aria-label="Live Chat" title="Chat dengan saya">
+        <svg class="chat-fab__icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        <svg class="chat-fab__close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        <span class="chat-fab__notif" id="chatNotif" style="display:none">1</span>
+    </button>
+
+    <!-- Chat Widget Panel -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-widget__header">
+            <div class="chat-widget__avatar">PA</div>
+            <div class="chat-widget__info">
+                <h4>Muhamad Pasyafatir</h4>
+                <span class="chat-widget__status">
+                    <span class="chat-widget__status-dot"></span>
+                    Biasanya membalas dengan cepat
+                </span>
+            </div>
+        </div>
+        <div class="chat-widget__name-screen" id="chatNameScreen">
+            <div class="chat-widget__name-content">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--accent-purple);opacity:0.7">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                <p>Halo! 👋 Siapa nama kamu?</p>
+                <input type="text" id="visitorNameInput" class="chat-name-input" placeholder="Nama kamu...">
+                <button class="btn btn--primary" id="startChatBtn" style="width:100%;justify-content:center">Mulai Chat</button>
+            </div>
+        </div>
+        <div class="chat-widget__messages" id="chatMessages" style="display:none"></div>
+        <div class="chat-widget__input-area" id="chatInputArea" style="display:none">
+            <textarea id="chatInput" class="chat-widget__input" placeholder="Ketik pesan..." rows="1"></textarea>
+            <button class="chat-widget__send" id="chatSendBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Chat Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "GANTI_API_KEY",
+            authDomain: "GANTI_AUTH_DOMAIN",
+            databaseURL: "GANTI_DATABASE_URL",
+            projectId: "GANTI_PROJECT_ID",
+            storageBucket: "GANTI_STORAGE_BUCKET",
+            messagingSenderId: "GANTI_MESSAGING_SENDER_ID",
+            appId: "GANTI_APP_ID"
+        };
+
+        let db;
+        let sessionId = localStorage.getItem('chat_session_id');
+        let visitorName = localStorage.getItem('chat_visitor_name');
+        let isOpen = false;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+        } catch(e) { console.warn("Firebase config belum diisi."); }
+
+        const fab        = document.getElementById('chatFab');
+        const widget     = document.getElementById('chatWidget');
+        const nameScreen = document.getElementById('chatNameScreen');
+        const msgArea    = document.getElementById('chatMessages');
+        const inputArea  = document.getElementById('chatInputArea');
+        const chatInput  = document.getElementById('chatInput');
+        const sendBtn    = document.getElementById('chatSendBtn');
+        const notifDot   = document.getElementById('chatNotif');
+        const fabIcon    = fab.querySelector('.chat-fab__icon');
+        const fabClose   = fab.querySelector('.chat-fab__close');
+
+        fab.addEventListener('click', () => {
+            isOpen = !isOpen;
+            widget.classList.toggle('active', isOpen);
+            fabIcon.style.display = isOpen ? 'none' : 'block';
+            fabClose.style.display = isOpen ? 'block' : 'none';
+            if (isOpen) { notifDot.style.display = 'none'; }
+        });
+
+        document.getElementById('startChatBtn').addEventListener('click', startChat);
+        document.getElementById('visitorNameInput').addEventListener('keydown', e => { if(e.key==='Enter') startChat(); });
+
+        function startChat() {
+            const inp = document.getElementById('visitorNameInput');
+            const name = inp.value.trim();
+            if (!name) { inp.focus(); return; }
+            visitorName = name;
+            localStorage.setItem('chat_visitor_name', name);
+            if (!sessionId) {
+                sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+                localStorage.setItem('chat_session_id', sessionId);
+            }
+            if (db) {
+                set(ref(db, `chatSessions/${sessionId}`), {
+                    visitorName: name, startedAt: Date.now(),
+                    lastMessageAt: Date.now(), lastMessage: '', unreadAdmin: 0
+                });
+            }
+            showChat();
+            if (db) {
+                setTimeout(() => {
+                    push(ref(db, `chatMessages/${sessionId}`), {
+                        text: `Halo ${name}! 👋 Terima kasih sudah menghubungi saya. Silakan sampaikan pesan kamu!`,
+                        sender: 'admin', timestamp: Date.now()
+                    });
+                }, 600);
+            }
+        }
+
+        function showChat() {
+            nameScreen.style.display = 'none';
+            msgArea.style.display = 'flex';
+            inputArea.style.display = 'flex';
+            if (db && sessionId) listenMessages();
+            setTimeout(() => chatInput.focus(), 100);
+        }
+
+        function listenMessages() {
+            onValue(ref(db, `chatMessages/${sessionId}`), (snap) => {
+                const data = snap.val() || {};
+                const msgs = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+                msgArea.innerHTML = msgs.map(m => {
+                    const isAdm = m.sender === 'admin';
+                    return `<div class="cw-msg ${isAdm?'cw-msg--admin':'cw-msg--visitor'}">
+                        <div class="cw-msg__bubble">
+                            <p>${esc(m.text)}</p>
+                            <span class="cw-msg__time">${fmtTime(m.timestamp)}</span>
+                        </div></div>`;
+                }).join('');
+                msgArea.scrollTop = msgArea.scrollHeight;
+                const last = msgs[msgs.length-1];
+                if (last && last.sender==='admin' && !isOpen) {
+                    notifDot.style.display='flex';
+                    try {
+                        const ctx = new AudioContext();
+                        const o=ctx.createOscillator(),g=ctx.createGain();
+                        o.connect(g);g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(880,ctx.currentTime);
+                        o.frequency.setValueAtTime(1100,ctx.currentTime+0.1);
+                        g.gain.setValueAtTime(0.08,ctx.currentTime);
+                        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
+                        o.start();o.stop(ctx.currentTime+0.3);
+                    } catch(e){}
+                }
+            });
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text||!sessionId||!db) return;
+            const now = Date.now();
+            push(ref(db,`chatMessages/${sessionId}`),{text,sender:'visitor',timestamp:now});
+            set(ref(db,`chatSessions/${sessionId}/lastMessage`),text);
+            set(ref(db,`chatSessions/${sessionId}/lastMessageAt`),now);
+            set(ref(db,`chatSessions/${sessionId}/unreadAdmin`),1);
+            chatInput.value='';chatInput.style.height='auto';
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} });
+        chatInput.addEventListener('input', () => { chatInput.style.height='auto'; chatInput.style.height=Math.min(chatInput.scrollHeight,100)+'px'; });
+
+        if (visitorName && sessionId && db) showChat();
+
+        function fmtTime(ts) {
+            if(!ts) return '';
+            return new Date(ts).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+        }
+        function esc(s) {
+            return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+    </script>
 </body>
 </html>
+
